@@ -2,14 +2,24 @@ import Polyglot from 'node-polyglot';
 
 class TranslationApp {
   constructor() {
-    this.polyglot = new Polyglot();
-    this.currentLocale = ja
+    this.lang = lang
+    this.polyglot = new Polyglot({locale: "ja"});
+    this.currentLocale = localStorage.getItem(ja.lang); // スタート地点の指定、ユーザーの言語選択後にも使える変数
   }
 
   setup() {
-    polyglot.extend({
-      "hello": "こんにちは、世界"
-    });
+    if (this.currentLocale == "ja") {
+      polyglot.extend({
+        "hello": "こんにちは、世界"
+      });
+      return
+    }
+    if (this.currentLocale == "en") {
+      polyglot.extend({
+        "hello": "Hello, world"
+      });
+    }
+
     /* 
       現在のLocaleに合わせて、polyglotにメッセージをセットします。
       メッセージのセットにはpolyglot.extend()を利用します。
@@ -25,15 +35,21 @@ class TranslationApp {
 
   showMessage() {
     const mainEl = document.getElementById('main');
-    const h1 = document.createElement('h1');
     const setup = this.setup();
-    h1.innerHTML = setup;
-    mainEl.appendChild(h1);
+    mainEl.innerHTML = setup;
     /*
       mainというidがセットされた要素の下にh1タグで現在のlocaleに応じて、メッセージを表示します。 
     */
   }
 }
+
+const ja = new TranslationApp({
+  lang: "ja"
+});
+
+const en = new TranslationApp({
+  lang: "en"
+});
 
 {
   const button1 = document.getElementById('button1');
