@@ -3,19 +3,19 @@ import Polyglot from 'node-polyglot';
 class TranslationApp {
   constructor() {
     this.polyglot = new Polyglot(); // ここではPolyglotを呼ぶ役割だけ
-    this.currentLocale = localStorage.getItem('locale') || 'ja'; // スタート地点の指定、ユーザーの言語選択後にも使える変数
+    this.currentLocale = localStorage.getItem('data-locale') || 'ja'; // スタート地点の指定、ユーザーの言語選択後にも使える変数
   }
 
   setup() { // スコープを意識
-    if (this.currentLocale == "ja") {
+    if (this.currentLocale == 'ja') {
       this.polyglot.extend({
-        "helloJa": "こんにちは、世界"
+        "hello": "こんにちは、世界"
       });
       return
     }
-    if (this.currentLocale == "en") {
+    if (this.currentLocale == 'en') {
       this.polyglot.extend({
-        "helloEn": "Hello, world"
+        "hello": "Hello, world"
       });
     }
     /* 
@@ -25,7 +25,11 @@ class TranslationApp {
   }
 
   updateLocale(e) {
+    e.preventDefault(); //　メソッド。順番どおりに進むようにするため
+    const newLocale = e.target.dataset.locale;
+    console.log(newLocale);
 
+    localStorage.setItem('data-locale', newLocale);
     /*
       ボタンにセットされたdata-localeを元に現在のlocaleを変更します。
     */
@@ -33,13 +37,9 @@ class TranslationApp {
 
   showMessage() {
     const mainEl = document.getElementById('main');
-    if (this.currentLocale == "ja") {
-      mainEl.innerHTML = this.polyglot.t("helloJa");
-      return
-    }
-    if (this.currentLocale == "en") {
-      mainEl.innerHTML = this.polyglot.t("helloEn");
-    }
+    mainEl.innerHTML = `
+      <h1>${this.polyglot.t("hello")}</h1>
+    `
     /*
       mainというidがセットされた要素の下にh1タグで現在のlocaleに応じて、メッセージを表示します。 
     */
@@ -47,6 +47,10 @@ class TranslationApp {
 }
 
 {
+  const app = new TranslationApp();
+  app.setup();
+  app.showMessage();
+
   const button1 = document.getElementById('button1');
   button1.addEventListener("click", app.updateLocale);
   
