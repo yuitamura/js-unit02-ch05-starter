@@ -3,17 +3,17 @@ import Polyglot from 'node-polyglot';
 class TranslationApp {
   constructor() {
     this.polyglot = new Polyglot(); // ここではPolyglotを呼ぶ役割だけ
-    this.currentLocale = localStorage.getItem('data-locale') || 'ja'; // スタート地点の指定、ユーザーの言語選択後にも使える変数
+    this.currentLocale = localStorage.getItem('locale') || 'ja'; // スタート地点の指定、ユーザーの言語選択後にも使える変数
+    this.updateLocale = this.updateLocale.bind(this); // 右側：下の関数を呼び出している
   }
 
   setup() { // スコープを意識
-    if (this.currentLocale == 'ja') {
+    const currentLocale = this.currentLocale;
+    if (currentLocale === 'ja') {
       this.polyglot.extend({
         "hello": "こんにちは、世界"
       });
-      return
-    }
-    if (this.currentLocale == 'en') {
+    } else {
       this.polyglot.extend({
         "hello": "Hello, world"
       });
@@ -29,7 +29,10 @@ class TranslationApp {
     const newLocale = e.target.dataset.locale;
     console.log(newLocale);
 
-    localStorage.setItem('data-locale', newLocale);
+    localStorage.setItem('locale', newLocale); // keyとvalueどちらも同じでOK？data-localeは使わない？
+    this.currentLocale = newLocale;
+    this.setup();
+    this.showMessage();
     /*
       ボタンにセットされたdata-localeを元に現在のlocaleを変更します。
     */
@@ -48,12 +51,13 @@ class TranslationApp {
 
 {
   const app = new TranslationApp();
-  app.setup();
-  app.showMessage();
 
   const button1 = document.getElementById('button1');
   button1.addEventListener("click", app.updateLocale);
   
   const button2 = document.getElementById('button2');
   button2.addEventListener("click", app.updateLocale);
+
+  app.setup();
+  app.showMessage();
 }
